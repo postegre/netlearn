@@ -2,7 +2,7 @@
 
 Задание 1
 
-Screenshot
+Screenshot: ![Задание 1 prometheus](https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.5/task1.png)
 
 Команды:
 sudo -s
@@ -21,7 +21,9 @@ sudo systemctl enable zabbix-server zabbix-agent apache2
 
 Задание 2
 
-Screenshot
+Screenshot ![Задание 1 prometheus](https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.5/task2.1.png) 
+Screenshot ![Задание 1 prometheus](https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.5/task2.2.png)
+Screenshot ![Задание 1 prometheus](https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.5/task2.3.png)
 
 Команды:
 sudo -s
