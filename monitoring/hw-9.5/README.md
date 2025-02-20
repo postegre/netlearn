@@ -1,6 +1,6 @@
 Домашнее задание к занятию «Система мониторинга Zabbix»
 
-Задание 1
+Задание 1 
 
 Screenshot: ![Задание 1 prometheus](https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.5/task1.png)
 
