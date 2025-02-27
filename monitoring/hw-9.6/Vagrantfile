@@ -1,0 +1,84 @@
+Vagrant.configure("2") do |config|
+  config.vm.define "belyashov.d.o-3" do |node|
+    node.vm.box = "debian/bookworm64"
+    node.vm.hostname = "belyashov.d.o-3"
+    node.vm.network "private_network", ip: "192.168.56.51"
+
+    node.vm.provision "shell", inline: <<-SHELL
+      sudo apt update
+
+      # Добавляем репозиторий Zabbix 6.0 (LTS)
+      wget https://repo.zabbix.com/zabbix/6.0/debian/pool/main/z/zabbix-release/zabbix-release_6.0-4+debian12_all.deb
+      sudo dpkg -i zabbix-release_6.0-4+debian12_all.deb
+      sudo apt update
+
+      # Устанавливаем Zabbix Agent 2, Python3 и jq для API-запросов
+      sudo apt install -y zabbix-agent2 python3 curl jq
+
+      # Настраиваем Zabbix Agent 2
+      sudo sed -i 's|^Server=.*|Server=192.168.56.6|' /etc/zabbix/zabbix_agent2.conf
+      sudo sed -i 's|^ServerActive=.*|ServerActive=192.168.56.6|' /etc/zabbix/zabbix_agent2.conf
+      sudo sed -i 's|^Hostname=.*|Hostname=belyashov.d.o-3|' /etc/zabbix/zabbix_agent2.conf
+
+      # Добавляем ListenIP, чтобы агент слушал только нужный IP
+      echo "ListenIP=192.168.56.51" | sudo tee -a /etc/zabbix/zabbix_agent2.conf
+
+      # Гарантированно включаем загрузку user parameters
+      echo "Include=/etc/zabbix/zabbix_agent2.d/*.conf" | sudo tee -a /etc/zabbix/zabbix_agent2.conf
+
+      # Создаём директорию для UserParameter
+      sudo mkdir -p /etc/zabbix/zabbix_agent2.d/
+
+      # Создаём файл кастомных параметров (гарантированно передаём аргументы)
+      cat <<EOF | sudo tee /etc/zabbix/zabbix_agent2.d/test_user_parameter.conf
+UserParameter=custom_py_ping[*], python3 /etc/zabbix/zabbix_agent2.d/test_user_parameters.py -ping \\$1
+UserParameter=custom_py_print[*], python3 /etc/zabbix/zabbix_agent2.d/test_user_parameters.py -simple_print \\$1
+UserParameter=custom_py_script[*], python3 /etc/zabbix/zabbix_agent2.d/test_user_parameters.py \\$1 \\$2
+EOF
+
+      # Создаём исправленный Python-скрипт
+      cat <<EOF | sudo tee /etc/zabbix/zabbix_agent2.d/test_user_parameters.py
+import sys
+import os
+import re
+
+if len(sys.argv) < 3:
+    print("Ошибка: Недостаточно аргументов")
+    sys.exit(1)
+
+command = sys.argv[1]
+param = sys.argv[2] if len(sys.argv) > 2 else ""
+
+if command == '-ping':
+    if not param:
+        print("Ошибка: Не указан IP для ping")
+        sys.exit(1)
+    result = os.popen(f"ping -c 1 {param}").read()
+    match = re.search(r"time=(\d+.\d+) ms", result)
+    print(match.group(1) if match else "0")
+
+elif command == '-simple_print':
+    print(param)
+
+else:
+    print("Запрос в консоль.")
+EOF
+
+      # Даем права на выполнение скрипта
+      sudo chmod +x /etc/zabbix/zabbix_agent2.d/test_user_parameters.py
+      sudo chown zabbix:zabbix /etc/zabbix/zabbix_agent2.d/test_user_parameters.py
+
+      # Перезапускаем агент
+      sudo systemctl restart zabbix-agent2
+
+      # Ждём, пока агент запустится
+      sleep 5
+
+      # Проверяем, что UserParameter загрузился
+      /usr/sbin/zabbix_agent2 -p | grep custom_py
+
+      # Проверяем, что Zabbix Agent 2 отвечает
+      zabbix_get -s 192.168.56.51 -p 10050 -k custom_py_ping[8.8.8.8]
+    SHELL
+  end
+end
