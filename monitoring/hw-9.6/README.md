@@ -28,6 +28,12 @@ Screenshot: ![Задание 5](https://github.com/postegre/netlearn/blob/main/m
 Screenshot: ![Задание 6](https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.6/Task6.png)
 
 
+test_user_parameter.conf :  https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.6/test_user_parameter.conf
+
+
+test_user_parameters.py : https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.6/test_user_parameters.py
+
+
 
 Задание 7
 
@@ -36,8 +42,9 @@ Screenshot: ![Задание 1](https://github.com/postegre/netlearn/blob/main/m
 Задание 8
 
 Screenshot: ![Задание 1](https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.6/Task8-1.png)
-Screenshot: ![Задание 1](https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.6/Task8-2.png)
-Screenshot: ![Задание 1](https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.6/Task8-3.png)
+Screenshot: ![Задание 1](https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.6/Task8.2.png)
+Screenshot: ![Задание 1](https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.6/Task-8.3.png)
+Screenshot: ![Задание 1](https://github.com/postegre/netlearn/blob/main/monitoring/hw-9.6/Task8.4.png)
 
 
 Задание 9
