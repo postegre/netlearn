@@ -42,10 +42,10 @@
 Задание 3       ![Задание 3](https://github.com/postegre/netlearn/blob/main/drrp/hw-10.1/task-3/Task-3.2.png)
 
 
-Задание 2 ссылка на мастер конфиг файл: https://github.com/postegre/netlearn/blob/main/drrp/hw-10.1/task-3/keepalived_master.conf
+Задание 3 ссылка на мастер конфиг файл: https://github.com/postegre/netlearn/blob/main/drrp/hw-10.1/task-3/keepalived_master.conf
 
 
-Задание 2 ссылка на бэкап конфиг файл: https://github.com/postegre/netlearn/blob/main/drrp/hw-10.1/task-3/keepalived_backup.conf
+Задание 3 ссылка на бэкап конфиг файл: https://github.com/postegre/netlearn/blob/main/drrp/hw-10.1/task-3/keepalived_backup.conf
 
 
-Задание 2 ссылка скрипт файл: https://github.com/postegre/netlearn/blob/main/drrp/hw-10.1/task-3/update_priority.sh
+Задание 3 ссылка скрипт файл: https://github.com/postegre/netlearn/blob/main/drrp/hw-10.1/task-3/update_priority.sh
