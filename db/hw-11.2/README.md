@@ -27,3 +27,21 @@
 Решение:Добавляем промежуточный слой кеша.
 Если запрос уже кеширован — БД не задействуется.
 Если нет — запрос идёт к БД и сразу кешируется.
+
+
+
+
+
+
+Задание 2  ![Задание 2](https://github.com/postegre/netlearn/blob/main/db/hw-11.2/Task-11.2.png)   
+
+
+
+Задание 3   ![Задание 3](https://github.com/postegre/netlearn/blob/main/db/hw-11.2/Task-11.3.png)
+
+
+
+Задание 4   ![Задание 4](https://github.com/postegre/netlearn/blob/main/db/hw-11.2/Task-11.4.png)
+
+
+Задание 5   ![Задание 5](https://github.com/postegre/netlearn/blob/main/db/hw-11.2/Task-11.5.png)
