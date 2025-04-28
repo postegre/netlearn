@@ -1,0 +1,89 @@
+---
+- name: Install and configure RabbitMQ Cluster
+  hosts: all
+  become: true
+  vars:
+    rabbitmq_cookie: "MYSECRETCOOKIE123456"
+    cluster_master: "rabbit1"
+    ha_policy_name: "ha-all"
+  tasks:
+
+    - name: Install dependencies
+      apt:
+        name:
+          - curl
+          - gnupg
+          - apt-transport-https
+          - lsb-release
+        state: present
+        update_cache: true
+
+    - name: Add RabbitMQ signing key
+      shell: |
+        curl -fsSL https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey | gpg --dearmor | tee /usr/share/keyrings/rabbitmq-archive-keyring.gpg > /dev/null
+      args:
+        creates: /usr/share/keyrings/rabbitmq-archive-keyring.gpg
+
+    - name: Add RabbitMQ and Erlang repositories
+      copy:
+        dest: /etc/apt/sources.list.d/rabbitmq.list
+        content: |
+          deb [signed-by=/usr/share/keyrings/rabbitmq-archive-keyring.gpg] https://dl.cloudsmith.io/public/rabbitmq/erlang/deb/ubuntu jammy main
+          deb [signed-by=/usr/share/keyrings/rabbitmq-archive-keyring.gpg] https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/deb/ubuntu jammy main
+
+    - name: Install RabbitMQ server
+      apt:
+        name: rabbitmq-server
+        state: present
+        update_cache: true
+
+    - name: Ensure RabbitMQ is enabled and started
+      service:
+        name: rabbitmq-server
+        state: started
+        enabled: true
+
+    - name: Set Erlang cookie
+      copy:
+        content: "{{ rabbitmq_cookie }}"
+        dest: /var/lib/rabbitmq/.erlang.cookie
+        owner: rabbitmq
+        group: rabbitmq
+        mode: '0400'
+
+    - name: Restart RabbitMQ after setting cookie
+      service:
+        name: rabbitmq-server
+        state: restarted
+
+    - name: Configure rabbitmq to allow guest from any IP
+      lineinfile:
+        path: /etc/rabbitmq/rabbitmq.conf
+        line: "loopback_users = none"
+        create: yes
+
+    - name: Restart RabbitMQ after config change
+      service:
+        name: rabbitmq-server
+        state: restarted
+
+    - name: Stop RabbitMQ app on non-master nodes
+      when: inventory_hostname != cluster_master
+      command: rabbitmqctl stop_app
+
+    - name: Reset RabbitMQ node on non-master nodes
+      when: inventory_hostname != cluster_master
+      command: rabbitmqctl reset
+
+    - name: Join cluster on non-master nodes
+      when: inventory_hostname != cluster_master
+      command: rabbitmqctl join_cluster rabbit@{{ cluster_master }}
+
+    - name: Start RabbitMQ app on non-master nodes
+      when: inventory_hostname != cluster_master
+      command: rabbitmqctl start_app
+
+    - name: Set HA policy on cluster master
+      when: inventory_hostname == cluster_master
+      command: >
+        rabbitmqctl set_policy {{ ha_policy_name }} "^" '{"ha-mode":"all"}'
