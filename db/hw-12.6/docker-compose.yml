@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  mysql-node1:
+    image: mysql:8.0
+    container_name: mysql-node1
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./node1/my.cnf:/etc/mysql/conf.d/my.cnf
+      - mysql_node1_data:/var/lib/mysql
+    networks:
+      - mysqlnet
+
+  mysql-node2:
+    image: mysql:8.0
+    container_name: mysql-node2
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./node2/my.cnf:/etc/mysql/conf.d/my.cnf
+      - mysql_node2_data:/var/lib/mysql
+    networks:
+      - mysqlnet
+
+volumes:
+  mysql_node1_data:
+  mysql_node2_data:
+
+networks:
+  mysqlnet:
